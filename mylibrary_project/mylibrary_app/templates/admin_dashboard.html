@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+<li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'manage_books' %}">Books</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'manage_students' %}">Students</a></li>
+
+
+{% endblock %}
+
+{% block content %}
+
+{% if dashboard %}
+<div class="container mt-4"></div>
+<div class="row">
+  <!-- Sidebar -->
+  <div class="col-lg-2 col-md-3 mb-4">
+    <div class="card shadow rounded sticky-top" style="background-color: #2C3E50; min-height: 70vh;">
+      <div class="card-body d-flex flex-column p-3">
+        <!-- Sidebar Brand -->
+        <a href="{% url 'admin_dashboard' %}" class="text-white text-decoration-none fs-5 fw-bold mb-3">
+          📚 MyLibrary
+        </a>
+        <hr class="text-white">
+
+        <!-- Sidebar Links -->
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item mb-1">
+            <a href="{% url 'admin_dashboard' %}"
+              class="nav-link text-white {% if request.path == '/admin_dashboard/' %}active{% endif %}">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="{% url 'manage_books' %}"
+              class="nav-link text-white {% if request.path == '/admin_dashboard/books/' %}active{% endif %}">
+              Manage Books
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="{% url 'manage_students' %}"
+              class="nav-link text-white {% if request.path == '/admin_dashboard/students/' %}active{% endif %}">
+              Manage Students
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="{% url 'manage_issued_books' %}"
+              class="nav-link text-white {% if request.path == '/admin_dashboard/issued_books/' %}active{% endif %}">
+              Issued Books
+            </a>
+          </li>
+        </ul>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="col-lg-10 col-md-9">
+    <h3 class="text-warning mb-4">Admin Dashboard</h3>
+
+
+    <div class="row g-4">
+      <!-- Summary Card 1 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card text-white" style="background-color:#34495E;">
+          <div class="card-body">
+            <h5 class="card-title">Total Books</h5>
+            <p class="card-text fs-4">{{ total_books }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Card 2 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card text-white" style="background-color:#34495E;">
+          <div class="card-body">
+            <h5 class="card-title">Total Students</h5>
+            <p class="card-text fs-4">{{ total_students }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Card 3 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card text-white" style="background-color:#34495E;">
+          <div class="card-body">
+            <h5 class="card-title">Issued Books</h5>
+            <p class="card-text fs-4">{{ total_issued_books }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome Card -->
+      <div class="col-12">
+        <div class="card shadow p-3 mt-3" style="background-color:#34495E; color:white;">
+          <h5>Welcome, Admin!</h5>
+          <p>Select an option from the sidebar to manage Books, Students, or Issue Books.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% if manage_studnts %}
+<h4 class="mb-3 text-success">Manage Students</h4>
+<a href="{% url 'add_student' %}" class="btn btn-primary mb-3">Add New Student</a>
+
+<!-- Search Form -->
+<form method="get" class="mb-3 d-flex">
+  <input type="text" name="q" class="form-control me-2" placeholder="Search by Name, Email, Roll, Phone" value="{{ query }}">
+  <button type="submit" class="btn btn-success">Search</button>
+  <a href="{% url 'manage_students' %}" class="btn btn-secondary ms-2">Reset</a>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Profile</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Roll Number</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>
+          {% if student.profile_image %}
+          <img src="{{ student.profile_image.url }}" alt="Profile" class="rounded-circle" width="40" height="40">
+          {% else %}
+          <img src="" alt="Profile" class="rounded-circle" width="40" height="40">
+          {% endif %}
+        </td>
+        <td>{{ student.id }}</td>
+        <td>{{ student.name }}</td>
+        <td>{{ student.email }}</td>
+        <td>{{ student.phone }}</td>
+        <td>{{ student.roll_number }}</td>
+        <td>
+          <a href="{% url 'edit_student' student.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'delete_student' student.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center text-danger">No students found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if add_new_student or edit_student %}
+<div class="card shadow p-4">
+  <h4 class="mb-4 text-primary">{% if edit_student %}Edit Student{% else %}Add New Student{% endif %}</h4>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small">
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success">{% if edit_student %}Update{% else %}Add{% endif %}</button>
+    <a href="{% url 'manage_students' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endif %}
+
+{% if manage_books %}
+<h4 class="mb-3 text-success">Manage Books</h4>
+
+<a href="{% url 'add_book' %}" class="btn btn-primary mb-3">Add New Book</a>
+
+<!-- 🔍 Search form -->
+<form method="get" class="mb-3 d-flex" role="search">
+  <input type="text" name="q" value="{{ query|default:'' }}" 
+         class="form-control me-2" placeholder="Search by title, author, or category">
+  <button type="submit" class="btn btn-success">Search</button>
+</form>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Category</th>
+      <th>Quantity</th>
+      <th>Added At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    <tr>
+      <td>{{ book.id }}</td>
+      <td>{{ book.title }}</td>
+      <td>{{ book.author }}</td>
+      <td>{{ book.category }}</td>
+      <td>{{ book.quantity }}</td>
+      <td>{{ book.added_at|date:"d-m-Y" }}</td>
+      <td>
+        <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'delete_book' book.id %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="7" class="text-center text-muted">No books found 🚫</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if add_new_book or edit_book %}
+
+<div class="card shadow p-4">
+  <h4 class="mb-4 text-primary">
+    {% if edit_book %}Edit Book{% else %}Add New Book{% endif %}
+  </h4>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="mb-3">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small">
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">
+      {% if edit_book %}Update{% else %}Add{% endif %}
+    </button>
+    <a href="{% url 'manage_books' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+{% endif %}
+
+
+<!-- ISSUE BOOK SECTION -->{% if manage_issued_books %}
+<h4 class="mb-3 text-success">Manage Issued Books</h4>
+
+<a href="{% url 'add_issue_book' %}" class="btn btn-primary mb-3">Issue New Book</a>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Student</th>
+      <th>Book</th>
+      <th>Issue Date</th>
+      <th>Return Date</th>
+      <th>Returned?</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for issue in issued_books %}
+    <tr>
+      <td>{{ issue.id }}</td>
+      <td>{{ issue.student.name }}</td>
+      <td>{{ issue.book.title }}</td>
+      <td>{{ issue.issue_date }}</td>
+      <td>{{ issue.return_date|default:"-" }}</td>
+      <td>{% if issue.is_returned %}Yes{% else %}No{% endif %}</td>
+      <td>
+        <a href="{% url 'edit_issue_book' issue.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'delete_issue_book' issue.id %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if add_new_issue or edit_issue %}
+
+<div class="card shadow p-4">
+  <h4 class="mb-4 text-primary">
+    {% if edit_issue %}Edit Issued Book{% else %}Issue New Book{% endif %}
+  </h4>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="mb-3">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+      <div class="text-danger small">
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">
+      {% if edit_issue %}Update{% else %}Add{% endif %}
+    </button>
+    <a href="{% url 'manage_issued_books' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+{% endif %}
+
+
+
+{% endblock %}

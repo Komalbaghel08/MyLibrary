@@ -1,0 +1,73 @@
+{% extends 'landing_base.html' %}
+{% load static %}
+{% block title %}Welcome to MyLibrary{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="text-center py-5 bg-white rounded shadow-sm">
+  <h1 class="fw-bold display-5">Welcome to <span style="color:#4F46E5;">MyLibrary</span></h1>
+  <p class="lead text-muted">A smarter way to manage books, students, and library operations.</p>
+  <div class="mt-4">
+    <a href="{% url 'student_login' %}" class="btn btn-primary btn-lg me-2"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
+    <a href="{% url 'student_signup' %}" class="btn btn-outline-dark btn-lg"><i class="fas fa-user-plus me-2"></i>Signup</a>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold">Key Features</h2>
+    <p class="text-muted">Simple, fast, and reliable library management system</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body text-center">
+          <i class="fas fa-search fa-2x text-primary mb-3"></i>
+          <h5 class="fw-bold text-primary">Easy Book Search</h5>
+          <p class="text-muted">Find your favorite books with a powerful search system.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body text-center">
+          <i class="fas fa-book-open fa-2x text-primary mb-3"></i>
+          <h5 class="fw-bold text-primary">Issue & Return</h5>
+          <p class="text-muted">Manage book issuance and returns efficiently with reminders.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body text-center">
+          <i class="fas fa-bullhorn fa-2x text-primary mb-3"></i>
+          <h5 class="fw-bold text-primary">Notices Board</h5>
+          <p class="text-muted">Stay updated with important announcements and events.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5 bg-white rounded shadow-sm">
+  <div class="row align-items-center">
+    <div class="col-md-6">
+      <img src="{% static 'images/library.jpg' %}" class="img-fluid rounded" alt="Library">
+    </div>
+    <div class="col-md-6">
+      <h2 class="fw-bold"><i class="fas fa-question-circle me-2 text-primary"></i>Why MyLibrary?</h2>
+      <p class="text-muted">Managing a library has never been easier. With MyLibrary, you can keep track of books, students, issues, and notices in one simple dashboard. Designed for simplicity, speed, and reliability.</p>
+      <a href="" class="btn btn-primary mt-3"><i class="fas fa-user-plus me-2"></i>Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="text-center py-5">
+  <h2 class="fw-bold"><i class="fas fa-rocket me-2 text-primary"></i>Ready to explore MyLibrary?</h2>
+  <p class="text-muted">Sign up today and experience the future of library management.</p>
+  <a href="" class="btn btn-primary btn-lg"><i class="fas fa-arrow-right me-2"></i>Join Now</a>
+</section>
+{% endblock %}
