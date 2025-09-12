@@ -34,5 +34,3 @@ A **Django-based Library Management System** designed for managing books, studen
 - Error handling for invalid login/signup.
 - Database: **SQLite3** (default, no setup required).
 - Modular project structure (separate apps, templates, static files).
-
-
