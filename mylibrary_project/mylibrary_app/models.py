@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-
 # Student model (acts like user)
 class Student(models.Model):
     name = models.CharField(max_length=100)
@@ -17,7 +16,6 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.roll_number})"
-
 
 # Book model
 class Book(models.Model):
